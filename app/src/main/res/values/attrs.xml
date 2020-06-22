@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="ScannerOverlayImpl">
+        <attr name="type" format="enum">
+            <enum name="IBAN" value="0"/>
+            <enum name="MRZ" value="1"/>
+            <enum name="QR" value="2"/>
+        </attr>
+    </declare-styleable>
+
+
+</resources>

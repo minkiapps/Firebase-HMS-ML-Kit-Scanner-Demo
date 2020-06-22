@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Scanner</string>
+
+    <string name="sample_mrz">IDD&lt;&lt;T0159C2MN1&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;\n6408125&lt;2704058D&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;2\nMUSTERMANN&lt;&lt;ERIKA&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;</string>
+</resources>
