@@ -2,7 +2,6 @@ package com.minkiapps.scanner.analyser
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
-import android.graphics.ImageFormat
 import android.graphics.Rect
 import android.media.Image
 import android.util.Size
@@ -29,7 +28,6 @@ abstract class BaseAnalyser<T>(private val scannerOverlay: ScannerOverlay) : Ima
     fun debugInfoLiveData() : LiveData<String> = debugInfoData
 
     var emitDebugInfo : Boolean = true
-    var emitBitmap : Boolean = true
 
     @SuppressLint("UnsafeExperimentalUsageError")
     override fun analyze(imageProxy: ImageProxy) {
@@ -40,24 +38,23 @@ abstract class BaseAnalyser<T>(private val scannerOverlay: ScannerOverlay) : Ima
             val scannerRect = getScannerRectToPreviewViewRelation(imageProxy.width.toFloat() / imageProxy.height)
 
             val image = imageProxy.image!!
-            val cropRect = image.getCropRectAccordingToRotation(scannerRect, rotation)
+            val cropRect = image.getCropRectAccordingToRotation(scannerRect, rotation) //TODO implement logic for landscape mode
             image.cropRect = cropRect
 
             val byteArray = YuvNV21Util.yuv420toNV21(image)
-            val inputImage = InputImage.fromByteArray(byteArray, cropRect.width(), cropRect.height(), rotation, InputImage.IMAGE_FORMAT_NV21)
-
-            if(emitBitmap) {
-                val bitmap = BitmapUtil.getBitmap(byteArray, FrameMetadata(cropRect.width(), cropRect.height(), rotation))
-                imageMutableData.postValue(bitmap)
-            }
-            val imagePreparedReadyEpoch = System.currentTimeMillis()
+            val bitmap = BitmapUtil.getBitmap(byteArray, FrameMetadata(cropRect.width(), cropRect.height(), rotation))
             Timber.d("Bitmap prepared width: ${cropRect.width()} height: ${cropRect.height()}")
+            val imagePreparedReadyEpoch = System.currentTimeMillis()
+
+            imageMutableData.postValue(bitmap)
 
             val size = if(rotation == 90 || rotation == 270) {
                 Size(cropRect.height(), cropRect.width())
             } else {
                 Size(cropRect.width(), cropRect.height())
             }
+
+            val inputImage = InputImage.fromBitmap(bitmap, 0) //image is rotated correctly already, so rotation is 0
             onInputImagePrepared(inputImage, size)
 
             val imageProcessedEpoch = System.currentTimeMillis()
@@ -80,6 +77,7 @@ abstract class BaseAnalyser<T>(private val scannerOverlay: ScannerOverlay) : Ima
         mutableLiveData.postValue(value)
     }
 
+    //this only works in portrait mode
     private fun getScannerRectToPreviewViewRelation(previewSizeRatio: Float): ScannerRectToPreviewViewRelation {
         val size = scannerOverlay.size
         val width = size.width
@@ -106,30 +104,30 @@ abstract class BaseAnalyser<T>(private val scannerOverlay: ScannerOverlay) : Ima
                                                 val relativeWidth: Float,
                                                 val relativeHeight: Float)
 
-    private fun Image.getCropRectAccordingToRotation(scannerRect: BaseAnalyser.ScannerRectToPreviewViewRelation, rotation: Int) : Rect {
+    private fun Image.getCropRectAccordingToRotation(scannerRect: ScannerRectToPreviewViewRelation, rotation: Int) : Rect {
         return when(rotation) {
-            0, 360 -> {
+            0 -> {
                 val startX = (scannerRect.relativePosX * this.width).toInt()
                 val numberPixelW = (scannerRect.relativeWidth * this.width).toInt()
                 val startY = (scannerRect.relativePosY * this.height).toInt()
                 val numberPixelH = (scannerRect.relativeHeight * this.height).toInt()
                 Rect(startX, startY, startX + numberPixelW, startY + numberPixelH)
             }
-            90, -270 -> {
+            90 -> {
                 val startX = (scannerRect.relativePosY * this.width).toInt()
                 val numberPixelW = (scannerRect.relativeHeight * this.width).toInt()
                 val startY = (scannerRect.relativePosX * this.height).toInt()
                 val numberPixelH = (scannerRect.relativeWidth * this.height).toInt()
                 Rect(startX, startY, startX + numberPixelW, startY + numberPixelH)
             }
-            180, -180 -> {
+            180 -> {
                 val numberPixelW = (scannerRect.relativeWidth * this.width).toInt()
                 val numberPixelH = (scannerRect.relativeHeight * this.height).toInt()
                 val startX = (scannerRect.relativePosX * this.width).toInt()
                 val startY = (this.height - scannerRect.relativePosY * this.height - numberPixelH).toInt()
                 Rect(startX, startY, startX + numberPixelW, startY + numberPixelH)
             }
-            270, -90 -> {
+            270 -> {
                 val numberPixelW = (scannerRect.relativeHeight * this.width).toInt()
                 val numberPixelH = (scannerRect.relativeWidth * this.height).toInt()
                 val startX = (this.width - scannerRect.relativePosY * this.width - numberPixelW).toInt()
