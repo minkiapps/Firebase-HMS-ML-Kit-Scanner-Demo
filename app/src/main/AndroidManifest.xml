@@ -15,9 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name="com.minkiapps.scanner.iban.IbanScannerActivity"
-            android:screenOrientation="portrait"
-            />
+        <activity android:name="com.minkiapps.scanner.iban.IbanScannerActivity"/>
 
         <activity android:name=".id.IDScannerActivity"
             android:screenOrientation="portrait"

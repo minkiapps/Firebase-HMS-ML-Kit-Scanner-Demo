@@ -35,10 +35,10 @@ abstract class BaseAnalyser<T>(private val scannerOverlay: ScannerOverlay) : Ima
             val imageProxyReadyEpoch = System.currentTimeMillis()
             val rotation = imageProxy.imageInfo.rotationDegrees
             Timber.d("New image from proxy width : ${imageProxy.width} height : ${imageProxy.height} format : ${imageProxy.format} rotation: $rotation")
-            val scannerRect = getScannerRectToPreviewViewRelation(imageProxy.width.toFloat() / imageProxy.height)
+            val scannerRect = getScannerRectToPreviewViewRelation(Size(imageProxy.width, imageProxy.height), rotation)
 
             val image = imageProxy.image!!
-            val cropRect = image.getCropRectAccordingToRotation(scannerRect, rotation) //TODO implement logic for landscape mode
+            val cropRect = image.getCropRectAccordingToRotation(scannerRect, rotation)
             image.cropRect = cropRect
 
             val byteArray = YuvNV21Util.yuv420toNV21(image)
@@ -77,24 +77,46 @@ abstract class BaseAnalyser<T>(private val scannerOverlay: ScannerOverlay) : Ima
         mutableLiveData.postValue(value)
     }
 
-    //this only works in portrait mode
-    private fun getScannerRectToPreviewViewRelation(previewSizeRatio: Float): ScannerRectToPreviewViewRelation {
-        val size = scannerOverlay.size
-        val width = size.width
-        val height = size.height
-        val previewWidth = height / previewSizeRatio
-        val widthDeltaLeft = (previewWidth - width) / 2
+    private fun getScannerRectToPreviewViewRelation(proxySize : Size, rotation : Int): ScannerRectToPreviewViewRelation {
+        return when(rotation) {
+            0, 180 -> {
+                val size = scannerOverlay.size
+                val width = size.width
+                val height = size.height
+                val previewHeight = width / (proxySize.width.toFloat() / proxySize.height)
+                val heightDeltaTop = (previewHeight - height) / 2
 
-        val scannerRect = scannerOverlay.scanRect
-        val rectStartX = widthDeltaLeft + scannerRect.left
-        val rectStartY = scannerRect.top
+                val scannerRect = scannerOverlay.scanRect
+                val rectStartX = scannerRect.left
+                val rectStartY = heightDeltaTop + scannerRect.top
 
-        return ScannerRectToPreviewViewRelation(
-            rectStartX / previewWidth,
-            rectStartY / height,
-            scannerRect.width() / previewWidth,
-            scannerRect.height() / height
-        )
+                ScannerRectToPreviewViewRelation(
+                    rectStartX / width,
+                    rectStartY / previewHeight,
+                    scannerRect.width() / width,
+                    scannerRect.height() / previewHeight
+                )
+            }
+            90, 270 -> {
+                val size = scannerOverlay.size
+                val width = size.width
+                val height = size.height
+                val previewWidth = height / (proxySize.width.toFloat() / proxySize.height)
+                val widthDeltaLeft = (previewWidth - width) / 2
+
+                val scannerRect = scannerOverlay.scanRect
+                val rectStartX = widthDeltaLeft + scannerRect.left
+                val rectStartY = scannerRect.top
+
+                ScannerRectToPreviewViewRelation(
+                    rectStartX / previewWidth,
+                    rectStartY / height,
+                    scannerRect.width() / previewWidth,
+                    scannerRect.height() / height
+                )
+            }
+            else -> throw IllegalArgumentException("Rotation degree ($rotation) not supported!")
+        }
     }
 
     abstract fun onInputImagePrepared(inputImage: InputImage, size: Size)
@@ -122,9 +144,9 @@ abstract class BaseAnalyser<T>(private val scannerOverlay: ScannerOverlay) : Ima
             }
             180 -> {
                 val numberPixelW = (scannerRect.relativeWidth * this.width).toInt()
+                val startX = (this.width - scannerRect.relativePosX * this.width - numberPixelW).toInt()
                 val numberPixelH = (scannerRect.relativeHeight * this.height).toInt()
-                val startX = (scannerRect.relativePosX * this.width).toInt()
-                val startY = (this.height - scannerRect.relativePosY * this.height - numberPixelH).toInt()
+                val startY = (height - scannerRect.relativePosY * this.height - numberPixelH).toInt()
                 Rect(startX, startY, startX + numberPixelW, startY + numberPixelH)
             }
             270 -> {

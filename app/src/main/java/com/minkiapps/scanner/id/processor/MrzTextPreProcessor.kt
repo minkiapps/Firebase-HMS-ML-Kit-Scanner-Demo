@@ -110,10 +110,7 @@ object MrzTextPreProcessor {
             )
             .correctLines()
 
-        return if(checkIfQualifiedForMrzParsing(
-                preProcessed
-            )
-        ) {
+        return if(checkIfQualifiedForMrzParsing(preProcessed)) {
             preProcessed
         } else {
             null

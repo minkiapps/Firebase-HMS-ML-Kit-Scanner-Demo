@@ -3,15 +3,20 @@ package com.minkiapps.scanner.overlay
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
+import android.os.Build
 import android.util.AttributeSet
 import android.util.Size
 import android.view.View
 import androidx.core.graphics.withScale
 import androidx.core.graphics.withTranslation
 import com.google.mlkit.vision.text.Text
+import com.minkiapps.scanner.BuildConfig
 import com.minkiapps.scanner.R
 import com.minkiapps.scanner.util.getEnum
+import com.minkiapps.scanner.util.isPortrait
 import com.minkiapps.scanner.util.px
+import kotlin.math.max
+import kotlin.math.min
 
 class ScannerOverlayImpl @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -51,7 +56,10 @@ class ScannerOverlayImpl @JvmOverloads constructor(
 
     init {
         setWillNotDraw(false)
-        setLayerType(LAYER_TYPE_HARDWARE, null)
+
+        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
+            setLayerType(LAYER_TYPE_HARDWARE, null)
+        }
 
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.ScannerOverlayImpl, 0, 0)
         type = typedArray.getEnum(R.styleable.ScannerOverlayImpl_type, Type.IBAN)
@@ -87,12 +95,21 @@ class ScannerOverlayImpl @JvmOverloads constructor(
     override val scanRect: RectF
         get() = when (type) {
             Type.IBAN -> {
-                val rectW = width * 0.9f
-                val l = (width - rectW) / 2
-                val r = width - l
-                val t = height * 0.15f
-                val b = t + rectW / 10
-                RectF(l, t, r, b)
+                if(context.isPortrait()) {
+                    val rectW = min(width * 0.95f, MAX_WIDTH_PORTRAIT)
+                    val l = (width - rectW) / 2
+                    val r = width - l
+                    val t = height * 0.2f
+                    val b = t + rectW / 10
+                    RectF(l, t, r, b)
+                } else {
+                    val rectW = min(width * 0.6f, MAX_WIDTH_LANDSCAPE)
+                    val l = width * 0.05f
+                    val r = l + rectW
+                    val t = height * 0.15f
+                    val b = t + rectW / 10
+                    RectF(l, t, r, b)
+                }
             }
             Type.ID -> {
                 val rectW = width * 0.95f
@@ -120,4 +137,9 @@ class ScannerOverlayImpl @JvmOverloads constructor(
     }
 
     data class GraphicBlock(val textBlock: Text.TextBlock, val bitmapSize: Size)
+
+    companion object {
+        const val MAX_WIDTH_PORTRAIT = 1200f
+        const val MAX_WIDTH_LANDSCAPE = 2000f
+    }
 }

@@ -5,7 +5,7 @@ import androidx.lifecycle.Observer
 import com.minkiapps.scanner.analyser.BaseAnalyser
 import com.minkiapps.scanner.overlay.ScannerOverlayImpl
 import com.minkiapps.scanner.scan.BaseScannerActivity
-import kotlinx.android.synthetic.main.activity_scanner.*
+import kotlinx.android.synthetic.main.activity_iban_scanner.*
 
 class SepaQrScannerActivity : BaseScannerActivity<SepaData>() {
 

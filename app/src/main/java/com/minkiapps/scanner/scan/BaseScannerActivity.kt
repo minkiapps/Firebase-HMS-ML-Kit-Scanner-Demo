@@ -17,11 +17,11 @@ import androidx.lifecycle.Observer
 import com.minkiapps.scanner.R
 import com.minkiapps.scanner.analyser.BaseAnalyser
 import com.minkiapps.scanner.overlay.ScannerOverlayImpl
-import kotlinx.android.synthetic.main.activity_scanner.*
+import kotlinx.android.synthetic.main.activity_iban_scanner.*
 import timber.log.Timber
 import java.util.concurrent.Executors
 
-abstract class BaseScannerActivity<T> : AppCompatActivity(R.layout.activity_scanner) {
+abstract class BaseScannerActivity<T> : AppCompatActivity(R.layout.activity_iban_scanner) {
 
     private var torchOn : Boolean = false
     private val analyserExecutor = Executors.newSingleThreadExecutor()
@@ -64,7 +64,12 @@ abstract class BaseScannerActivity<T> : AppCompatActivity(R.layout.activity_scan
 
         imageAnalyser.debugInfoLiveData().observe(this, Observer {
             val surfaceView = pvActScanner[0]
-            val info = "$it\nPreview Size (${surfaceView.width}, ${surfaceView.height})"
+            val info = "$it\nPreview Size (${surfaceView.width}, ${surfaceView.height}) " +
+                    "Translation (${surfaceView.translationX}, ${surfaceView.translationY}) " +
+                    "Scale (${surfaceView.scaleX}, ${surfaceView.scaleY}) " +
+                    "Pivot (${surfaceView.pivotX}, ${surfaceView.pivotY}) " +
+                    "Rotation (${surfaceView.rotation}) " +
+                    "Container Size (${pvActScanner.width}, ${pvActScanner.height})"
             //Transition (${surfaceView.translationX}, ${surfaceView.translationY}) Scale (${surfaceView.scaleX}, ${surfaceView.scaleY})
             tvActScannerDebugInfo.text = info
         })
@@ -81,6 +86,7 @@ abstract class BaseScannerActivity<T> : AppCompatActivity(R.layout.activity_scan
 
             // Preview
             val preview = Preview.Builder()
+                .setTargetResolution(Size(960, 1280))
                 .build()
 
             val imageAnalyzer = ImageAnalysis.Builder()

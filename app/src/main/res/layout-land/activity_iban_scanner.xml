@@ -11,7 +11,7 @@
         android:layout_height="match_parent" />
 
     <com.minkiapps.scanner.overlay.ScannerOverlayImpl
-        app:type="MRZ"
+        app:type="IBAN"
         android:id="@+id/olActScanner"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -19,38 +19,42 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:layout_marginBottom="16dp"
         android:id="@+id/tvActScannerScannedResult"
-        android:textSize="18sp"
-        tools:text="AT070100000005240085"
-        android:layout_margin="16dp"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
         android:textColor="@android:color/white"
+        android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
-        app:layout_constraintEnd_toStartOf="@+id/fabActScannerTorch"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="AT070100000005240085" />
 
     <TextView
         android:id="@+id/tvActScannerDebugInfo"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="16dp"
         android:gravity="start"
         android:textColor="@android:color/white"
         android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@+id/tvActScannerScannedResult"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/pvActScanner"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="@+id/tvActScannerScannedResult"
         tools:text="Processing time: 232 ms\nPreview Rotation: 90\nWidth: 720 Height: 72" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabActScannerTorch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_margin="32dp"
         android:src="@drawable/ic_baseline_flash_on_24dp_white"
-        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
@@ -66,6 +70,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
+            app:layout_constraintHorizontal_bias="0.05"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
