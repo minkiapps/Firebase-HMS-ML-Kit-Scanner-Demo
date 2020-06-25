@@ -1,6 +1,5 @@
 package com.minkiapps.scanner.iban
 
-import android.util.Size
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.tasks.Tasks
@@ -21,7 +20,7 @@ class IBANAnalyser(scannerOverlay: ScannerOverlay) : BaseAnalyser<String>(scanne
     private val textRecognizedData = MutableLiveData<Boolean>()
     fun textRecognizedLiveData(): LiveData<Boolean> = textRecognizedData
 
-    override fun onInputImagePrepared(inputImage: InputImage, size: Size) {
+    override fun onInputImagePrepared(inputImage: InputImage) {
         val result = Tasks.await(textRecognizer.process(inputImage))
         if(result.text.isNotBlank()) {
             Timber.d("Scanned raw text: ${result.text}")

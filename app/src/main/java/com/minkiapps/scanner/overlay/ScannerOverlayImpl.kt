@@ -121,7 +121,7 @@ class ScannerOverlayImpl @JvmOverloads constructor(
                     val b = t + rectH
                     RectF(l, t, r, b)
                 } else {
-                    val rectW = min(width * 0.5f, MAX_WIDTH_LANDSCAPE)
+                    val rectW = min(width * 0.4f, MAX_WIDTH_LANDSCAPE)
                     val l = width * 0.05f
                     val r = l + rectW
                     val rectH = rectW / 1.5f

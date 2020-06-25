@@ -48,21 +48,15 @@ abstract class BaseAnalyser<T>(private val scannerOverlay: ScannerOverlay) : Ima
 
             imageMutableData.postValue(bitmap)
 
-            val size = if(rotation == 90 || rotation == 270) {
-                Size(cropRect.height(), cropRect.width())
-            } else {
-                Size(cropRect.width(), cropRect.height())
-            }
-
             val inputImage = InputImage.fromBitmap(bitmap, 0) //image is rotated correctly already, so rotation is 0
-            onInputImagePrepared(inputImage, size)
+            onInputImagePrepared(inputImage)
 
             val imageProcessedEpoch = System.currentTimeMillis()
 
             if(emitDebugInfo) {
                 debugInfoData.postValue("""
                    Image proxy (${imageProxy.width},${imageProxy.height}) format : ${imageProxy.format} rotation: $rotation 
-                   Cropped Image (${size.width},${size.height}) Preparing took: ${imagePreparedReadyEpoch - imageProxyReadyEpoch}ms
+                   Cropped Image (${bitmap.width},${bitmap.height}) Preparing took: ${imagePreparedReadyEpoch - imageProxyReadyEpoch}ms
                    OCR Processing took : ${imageProcessedEpoch - imagePreparedReadyEpoch}ms
                 """.trimIndent())
             }
@@ -119,7 +113,7 @@ abstract class BaseAnalyser<T>(private val scannerOverlay: ScannerOverlay) : Ima
         }
     }
 
-    abstract fun onInputImagePrepared(inputImage: InputImage, size: Size)
+    abstract fun onInputImagePrepared(inputImage: InputImage)
 
     data class ScannerRectToPreviewViewRelation(val relativePosX: Float,
                                                 val relativePosY: Float,

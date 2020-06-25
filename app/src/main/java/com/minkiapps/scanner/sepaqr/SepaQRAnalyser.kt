@@ -1,6 +1,5 @@
 package com.minkiapps.scanner.sepaqr
 
-import android.util.Size
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.tasks.Tasks
@@ -24,7 +23,7 @@ internal class SepaQRAnalyser(scannerOverlay: ScannerOverlay) : BaseAnalyser<Sep
     private val qrRecognizedData = MutableLiveData<Boolean>()
     fun qrRecognizedLiveData(): LiveData<Boolean> = qrRecognizedData
 
-    override fun onInputImagePrepared(inputImage: InputImage, size: Size) {
+    override fun onInputImagePrepared(inputImage: InputImage) {
         val result = Tasks.await(barcodeScanner.process(inputImage))
 
         qrRecognizedData.postValue(result.isNotEmpty())

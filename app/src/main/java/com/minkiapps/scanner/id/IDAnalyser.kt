@@ -29,7 +29,7 @@ internal class IDAnalyser(scannerOverlay: ScannerOverlay) : BaseAnalyser<IDResul
     private val mrzBlockMutableLiveData : MutableLiveData<ScannerOverlayImpl.GraphicBlock> = MutableLiveData()
     val mrzBlockLiveData : LiveData<ScannerOverlayImpl.GraphicBlock> = mrzBlockMutableLiveData
 
-    override fun onInputImagePrepared(inputImage: InputImage, size: Size) {
+    override fun onInputImagePrepared(inputImage: InputImage) {
         val task = Tasks.await(textRecognizer.process(inputImage))
 
         var detectedPossibleMrzBlock = false
@@ -38,7 +38,7 @@ internal class IDAnalyser(scannerOverlay: ScannerOverlay) : BaseAnalyser<IDResul
 
             if(isPossibleMrzBlock(block.text)) {
                 detectedPossibleMrzBlock = true
-                mrzBlockMutableLiveData.postValue(ScannerOverlayImpl.GraphicBlock(block, size))
+                mrzBlockMutableLiveData.postValue(ScannerOverlayImpl.GraphicBlock(block, Size(inputImage.width, inputImage.height)))
 
                 MrzTextPreProcessor.process(block.text)?.let { processed ->
                     try {
