@@ -17,16 +17,11 @@
 
         <activity android:name="com.minkiapps.scanner.iban.IbanScannerActivity"/>
 
-        <activity android:name=".id.IDScannerActivity"
-            android:screenOrientation="portrait"
-            />
+        <activity android:name=".id.IDScannerActivity" />
 
-        <activity android:name=".sepaqr.SepaQrScannerActivity"
-            android:screenOrientation="portrait"
-            />
+        <activity android:name=".sepaqr.SepaQrScannerActivity" />
 
-        <activity android:name=".MainActivity"
-            android:screenOrientation="portrait">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

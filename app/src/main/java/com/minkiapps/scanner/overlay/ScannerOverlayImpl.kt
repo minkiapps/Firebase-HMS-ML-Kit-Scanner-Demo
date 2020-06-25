@@ -112,21 +112,40 @@ class ScannerOverlayImpl @JvmOverloads constructor(
                 }
             }
             Type.ID -> {
-                val rectW = width * 0.95f
-                val l = (width - rectW) / 2
-                val r = width - l
-                val rectH = rectW / 1.5f
-                val t = height * 0.15f
-                val b = t + rectH
-                RectF(l, t, r, b)
+                if(context.isPortrait()) {
+                    val rectW = min(width * 0.95f, MAX_WIDTH_PORTRAIT)
+                    val l = (width - rectW) / 2
+                    val r = width - l
+                    val rectH = rectW / 1.5f
+                    val t = height * 0.15f
+                    val b = t + rectH
+                    RectF(l, t, r, b)
+                } else {
+                    val rectW = min(width * 0.5f, MAX_WIDTH_LANDSCAPE)
+                    val l = width * 0.05f
+                    val r = l + rectW
+                    val rectH = rectW / 1.5f
+                    val t = height * 0.05f
+                    val b = t + rectH
+                    RectF(l, t, r, b)
+                }
             }
             Type.SEPAQR -> {
-                val size = width * 0.6f
-                val l = (width - size) / 2
-                val r = width - l
-                val t = height * 0.15f
-                val b = t + size
-                RectF(l, t, r, b)
+                if(context.isPortrait()) {
+                    val size = min(width * 0.6f, MAX_WIDTH_PORTRAIT)
+                    val l = (width - size) / 2
+                    val r = width - l
+                    val t = height * 0.15f
+                    val b = t + size
+                    RectF(l, t, r, b)
+                } else {
+                    val size = min(width * 0.25f, MAX_WIDTH_LANDSCAPE)
+                    val l = width * 0.05f
+                    val r = l + size
+                    val t = height * 0.05f
+                    val b = t + size
+                    RectF(l, t, r, b)
+                }
             }
         }
 

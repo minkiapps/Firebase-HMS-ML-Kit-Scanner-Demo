@@ -17,11 +17,11 @@ import androidx.lifecycle.Observer
 import com.minkiapps.scanner.R
 import com.minkiapps.scanner.analyser.BaseAnalyser
 import com.minkiapps.scanner.overlay.ScannerOverlayImpl
-import kotlinx.android.synthetic.main.activity_iban_scanner.*
+import kotlinx.android.synthetic.main.activity_scanner.*
 import timber.log.Timber
 import java.util.concurrent.Executors
 
-abstract class BaseScannerActivity<T> : AppCompatActivity(R.layout.activity_iban_scanner) {
+abstract class BaseScannerActivity<T> : AppCompatActivity(R.layout.activity_scanner) {
 
     private var torchOn : Boolean = false
     private val analyserExecutor = Executors.newSingleThreadExecutor()
@@ -86,11 +86,11 @@ abstract class BaseScannerActivity<T> : AppCompatActivity(R.layout.activity_iban
 
             // Preview
             val preview = Preview.Builder()
-                .setTargetResolution(Size(960, 1280))
+                .setTargetResolution(Size(TARGET_PREVIEW_WIDTH, TARGET_PREVIEW_HEIGHT))
                 .build()
 
             val imageAnalyzer = ImageAnalysis.Builder()
-                .setTargetResolution(Size(960, 1280))
+                .setTargetResolution(Size(TARGET_PREVIEW_WIDTH, TARGET_PREVIEW_HEIGHT))
                 .build()
                 .also {
                     it.setAnalyzer(analyserExecutor, imageAnalyser)
@@ -152,6 +152,9 @@ abstract class BaseScannerActivity<T> : AppCompatActivity(R.layout.activity_iban
     abstract fun getScannerType(): ScannerOverlayImpl.Type
 
     companion object {
+        private const val TARGET_PREVIEW_WIDTH = 960
+        private const val TARGET_PREVIEW_HEIGHT = 1280
+
         private const val REQUEST_CODE_PERMISSIONS = 10
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
     }
