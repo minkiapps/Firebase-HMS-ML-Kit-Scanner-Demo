@@ -1,7 +1,6 @@
 package com.minkiapps.scanner.id
 
 import android.os.Bundle
-import androidx.lifecycle.Observer
 import com.minkiapps.scanner.analyser.BaseAnalyser
 import com.minkiapps.scanner.overlay.ScannerOverlayImpl
 import com.minkiapps.scanner.scan.BaseScannerActivity
@@ -24,9 +23,9 @@ class IDScannerActivity : BaseScannerActivity<IDResult>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        idAnalyser.mrzBlockLiveData.observe(this, Observer {
+        idAnalyser.mrzBlockLiveData.observe(this) {
             olActScanner.drawGraphicBlocks(listOf(it))
-        })
+        }
     }
 
 }

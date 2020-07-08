@@ -59,6 +59,8 @@ dependencies {
     implementation "com.google.android.gms:play-services-mlkit-barcode-scanning:16.1.0"
     implementation "com.google.android.gms:play-services-mlkit-text-recognition:16.1.0"
 
+    implementation 'com.github.minkiapps:mrz-java:mrz-java-0.6'
+
     // validate iban
     implementation 'org.iban4j:iban4j:3.2.1'
 

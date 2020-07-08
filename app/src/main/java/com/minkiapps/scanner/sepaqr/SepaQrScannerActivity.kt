@@ -15,9 +15,9 @@ class SepaQrScannerActivity : BaseScannerActivity<SepaData>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        analyser.qrRecognizedLiveData().observe(this, Observer {
+        analyser.qrRecognizedLiveData().observe(this) {
             olActScanner.drawBlueRect = it
-        })
+        }
     }
 
     override fun getImageAnalyser(): BaseAnalyser<SepaData> {

@@ -8,10 +8,10 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.TextRecognizer
+import com.innovatrics.mrz.MrzParser
+import com.innovatrics.mrz.types.MrzDate
+import com.innovatrics.mrz.types.MrzSex
 import com.minkiapps.scanner.analyser.BaseAnalyser
-import com.minkiapps.scanner.id.parser.MrzParser
-import com.minkiapps.scanner.id.parser.types.MrzDate
-import com.minkiapps.scanner.id.parser.types.MrzSex
 import com.minkiapps.scanner.id.processor.MrzTextPreProcessor
 import com.minkiapps.scanner.id.processor.MrzTextPreProcessor.MIN_POSSIBLE_CHAR_LENGTH_PER_LINE
 import com.minkiapps.scanner.overlay.ScannerOverlay

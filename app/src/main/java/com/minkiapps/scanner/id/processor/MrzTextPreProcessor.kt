@@ -1,6 +1,6 @@
 package com.minkiapps.scanner.id.processor
 
-import com.minkiapps.scanner.id.parser.types.MrzFormat
+import com.innovatrics.mrz.types.MrzFormat
 import com.minkiapps.scanner.id.processor.MrzTextPreProcessor.MIN_SIZE_THRESHOLD
 import com.minkiapps.scanner.util.replaceWithinRange
 import timber.log.Timber
@@ -36,7 +36,7 @@ private fun List<String>.fillToMinimumSize(minSize : Int) : List<String>{
 }
 
 private fun List<String>.fillToSameSize() : List<String>{
-    val maxLength = maxBy {
+    val maxLength = maxByOrNull {
         it.length
     }?.length ?: return this
     return fillToMinimumSize(maxLength)
