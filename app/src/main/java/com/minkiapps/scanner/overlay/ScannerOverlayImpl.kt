@@ -10,12 +10,10 @@ import android.view.View
 import androidx.core.graphics.withScale
 import androidx.core.graphics.withTranslation
 import com.google.mlkit.vision.text.Text
-import com.minkiapps.scanner.BuildConfig
 import com.minkiapps.scanner.R
 import com.minkiapps.scanner.util.getEnum
 import com.minkiapps.scanner.util.isPortrait
 import com.minkiapps.scanner.util.px
-import kotlin.math.max
 import kotlin.math.min
 
 class ScannerOverlayImpl @JvmOverloads constructor(

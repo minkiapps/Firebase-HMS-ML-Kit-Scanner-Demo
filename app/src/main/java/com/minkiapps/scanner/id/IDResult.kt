@@ -2,7 +2,7 @@ package com.minkiapps.scanner.id
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
-import org.threeten.bp.LocalDate
+import java.time.LocalDate
 
 @Parcelize
 data class IDResult(

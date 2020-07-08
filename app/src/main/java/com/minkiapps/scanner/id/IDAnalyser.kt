@@ -16,8 +16,8 @@ import com.minkiapps.scanner.id.processor.MrzTextPreProcessor
 import com.minkiapps.scanner.id.processor.MrzTextPreProcessor.MIN_POSSIBLE_CHAR_LENGTH_PER_LINE
 import com.minkiapps.scanner.overlay.ScannerOverlay
 import com.minkiapps.scanner.overlay.ScannerOverlayImpl
-import org.threeten.bp.LocalDate
 import timber.log.Timber
+import java.time.LocalDate
 import java.util.*
 
 internal class IDAnalyser(scannerOverlay: ScannerOverlay) : BaseAnalyser<IDResult>(scannerOverlay) {

@@ -55,14 +55,14 @@ abstract class BaseScannerActivity<T> : AppCompatActivity(R.layout.activity_scan
             finish()
         })
 
-        imageAnalyser.liveData().observe(this, Observer { result ->
+        imageAnalyser.liveData().observe(this, { result ->
             tvActScannerScannedResult.text = ""
             result?.let {
                 tvActScannerScannedResult.text = it.toString()
             }
         })
 
-        imageAnalyser.debugInfoLiveData().observe(this, Observer {
+        imageAnalyser.debugInfoLiveData().observe(this, {
             val surfaceView = pvActScanner[0]
             val info = "$it\nPreview Size (${surfaceView.width}, ${surfaceView.height}) " +
                     "Translation (${surfaceView.translationX}, ${surfaceView.translationY}) " +
@@ -78,7 +78,7 @@ abstract class BaseScannerActivity<T> : AppCompatActivity(R.layout.activity_scan
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
 
-        cameraProviderFuture.addListener(Runnable {
+        cameraProviderFuture.addListener({
             val imageAnalyser = getImageAnalyser()
             lifecycle.addObserver(imageAnalyser)
             // Used to bind the lifecycle of cameras to the lifecycle owner
