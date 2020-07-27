@@ -9,7 +9,6 @@ import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.TextRecognizer
 import com.huawei.hms.mlsdk.MLAnalyzerFactory
 import com.huawei.hms.mlsdk.common.MLFrame
-import com.huawei.hms.mlsdk.text.MLLocalTextSetting
 import com.huawei.hms.mlsdk.text.MLTextAnalyzer
 import com.minkiapps.scanner.analyser.BaseAnalyser
 import com.minkiapps.scanner.overlay.ScannerOverlay
@@ -28,11 +27,7 @@ class IBANAnalyser(scannerOverlay: ScannerOverlay,
     }
 
     private val hmsTextRecognizer : MLTextAnalyzer by lazy {
-        val setting = MLLocalTextSetting.Factory()
-            .setOCRMode(MLLocalTextSetting.OCR_DETECT_MODE)
-            .setLanguage("en")
-            .create()
-        MLAnalyzerFactory.getInstance().getLocalTextAnalyzer(setting)
+        MLAnalyzerFactory.getInstance().localTextAnalyzer
     }
 
     private val textRecognizedData = MutableLiveData<Boolean>()
