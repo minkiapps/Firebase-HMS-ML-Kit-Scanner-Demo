@@ -1,5 +1,6 @@
 package com.minkiapps.scanner.sepaqr
 
+import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.tasks.Tasks
@@ -12,7 +13,9 @@ import com.minkiapps.scanner.analyser.BaseAnalyser
 import com.minkiapps.scanner.overlay.ScannerOverlay
 import timber.log.Timber
 
-internal class SepaQRAnalyser(scannerOverlay: ScannerOverlay) : BaseAnalyser<SepaData>(scannerOverlay) {
+class SepaQRAnalyser(scannerOverlay: ScannerOverlay,
+                     mlService: MLService
+) : BaseAnalyser<SepaData>(scannerOverlay, mlService) {
 
     private val barcodeScanner: BarcodeScanner = BarcodeScanning.getClient(
         BarcodeScannerOptions.Builder()
@@ -23,7 +26,8 @@ internal class SepaQRAnalyser(scannerOverlay: ScannerOverlay) : BaseAnalyser<Sep
     private val qrRecognizedData = MutableLiveData<Boolean>()
     fun qrRecognizedLiveData(): LiveData<Boolean> = qrRecognizedData
 
-    override fun onInputImagePrepared(inputImage: InputImage) {
+    override fun onBitmapPrepared(bitmap: Bitmap) {
+        val inputImage : InputImage = InputImage.fromBitmap(bitmap, 0)
         val result = Tasks.await(barcodeScanner.process(inputImage))
 
         qrRecognizedData.postValue(result.isNotEmpty())

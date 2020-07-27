@@ -17,6 +17,8 @@ import androidx.lifecycle.Observer
 import com.minkiapps.scanner.R
 import com.minkiapps.scanner.analyser.BaseAnalyser
 import com.minkiapps.scanner.overlay.ScannerOverlayImpl
+import com.minkiapps.scanner.util.isGmsAvailable
+import com.minkiapps.scanner.util.isHmsAvailable
 import kotlinx.android.synthetic.main.activity_scanner.*
 import timber.log.Timber
 import java.util.concurrent.Executors
@@ -150,6 +152,14 @@ abstract class BaseScannerActivity<T> : AppCompatActivity(R.layout.activity_scan
     abstract fun getImageAnalyser(): BaseAnalyser<T>
 
     abstract fun getScannerType(): ScannerOverlayImpl.Type
+
+    protected fun getMlKitService() : BaseAnalyser.MLService {
+        return when {
+            isGmsAvailable() -> BaseAnalyser.MLService.GMS
+            isHmsAvailable() -> BaseAnalyser.MLService.HMS
+            else -> throw RuntimeException("Neither GMS nor HMS is available on this phone!")
+        }
+    }
 
     companion object {
         private const val TARGET_PREVIEW_WIDTH = 960

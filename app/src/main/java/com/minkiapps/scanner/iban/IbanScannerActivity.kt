@@ -8,7 +8,7 @@ import com.minkiapps.scanner.scan.BaseScannerActivity
 class IbanScannerActivity : BaseScannerActivity<String>() {
 
     private val ibanAnalyser by lazy {
-        IBANAnalyser(scannerOverlay())
+        IBANAnalyser(scannerOverlay(), getMlKitService())
     }
 
     override fun getImageAnalyser(): BaseAnalyser<String> = ibanAnalyser

@@ -8,14 +8,14 @@ import android.util.Size
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.lifecycle.*
-import com.google.mlkit.vision.common.InputImage
 import com.minkiapps.scanner.overlay.ScannerOverlay
 import com.minkiapps.scanner.scan.FrameMetadata
 import com.minkiapps.scanner.util.BitmapUtil
 import com.minkiapps.scanner.util.YuvNV21Util
 import timber.log.Timber
 
-abstract class BaseAnalyser<T>(private val scannerOverlay: ScannerOverlay) : ImageAnalysis.Analyzer, LifecycleObserver {
+abstract class BaseAnalyser<T>(private val scannerOverlay: ScannerOverlay,
+                               protected val mlService : MLService) : ImageAnalysis.Analyzer, LifecycleObserver {
 
     private val imageMutableData = MutableLiveData<Bitmap>()
     private val mutableLiveData = MutableLiveData<T>()
@@ -48,8 +48,7 @@ abstract class BaseAnalyser<T>(private val scannerOverlay: ScannerOverlay) : Ima
 
             imageMutableData.postValue(bitmap)
 
-            val inputImage = InputImage.fromBitmap(bitmap, 0) //image is rotated correctly already, so rotation is 0
-            onInputImagePrepared(inputImage)
+            onBitmapPrepared(bitmap)
 
             val imageProcessedEpoch = System.currentTimeMillis()
 
@@ -113,7 +112,7 @@ abstract class BaseAnalyser<T>(private val scannerOverlay: ScannerOverlay) : Ima
         }
     }
 
-    abstract fun onInputImagePrepared(inputImage: InputImage)
+    abstract fun onBitmapPrepared(bitmap: Bitmap)
 
     data class ScannerRectToPreviewViewRelation(val relativePosX: Float,
                                                 val relativePosY: Float,
@@ -156,4 +155,8 @@ abstract class BaseAnalyser<T>(private val scannerOverlay: ScannerOverlay) : Ima
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     abstract fun close()
+
+    enum class MLService {
+        GMS, HMS
+    }
 }

@@ -9,7 +9,7 @@ import kotlinx.android.synthetic.main.activity_scanner.*
 class IDScannerActivity : BaseScannerActivity<IDResult>() {
 
     private val idAnalyser by lazy {
-        IDAnalyser(olActScanner)
+        IDAnalyser(olActScanner, getMlKitService())
     }
 
     override fun getImageAnalyser(): BaseAnalyser<IDResult> {

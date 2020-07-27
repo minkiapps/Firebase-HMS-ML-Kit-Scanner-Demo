@@ -1,5 +1,6 @@
 package com.minkiapps.scanner.id
 
+import android.graphics.Bitmap
 import android.util.Size
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -20,7 +21,9 @@ import timber.log.Timber
 import java.time.LocalDate
 import java.util.*
 
-internal class IDAnalyser(scannerOverlay: ScannerOverlay) : BaseAnalyser<IDResult>(scannerOverlay) {
+class IDAnalyser(scannerOverlay: ScannerOverlay,
+                          mlService: MLService
+) : BaseAnalyser<IDResult>(scannerOverlay, mlService) {
 
     private val textRecognizer: TextRecognizer = TextRecognition.getClient()
 
@@ -29,7 +32,8 @@ internal class IDAnalyser(scannerOverlay: ScannerOverlay) : BaseAnalyser<IDResul
     private val mrzBlockMutableLiveData : MutableLiveData<ScannerOverlayImpl.GraphicBlock> = MutableLiveData()
     val mrzBlockLiveData : LiveData<ScannerOverlayImpl.GraphicBlock> = mrzBlockMutableLiveData
 
-    override fun onInputImagePrepared(inputImage: InputImage) {
+    override fun onBitmapPrepared(bitmap: Bitmap) {
+        val inputImage = InputImage.fromBitmap(bitmap, 0)
         val task = Tasks.await(textRecognizer.process(inputImage))
 
         var detectedPossibleMrzBlock = false
