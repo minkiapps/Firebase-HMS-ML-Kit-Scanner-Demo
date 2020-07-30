@@ -59,6 +59,7 @@ dependencies {
     implementation "com.google.android.gms:play-services-mlkit-barcode-scanning:16.1.0"
     implementation "com.google.android.gms:play-services-mlkit-text-recognition:16.1.0"
 
+    implementation 'com.huawei.hms:ml-computer-vision-ocr-latin-model:2.0.1.300'
     implementation 'com.huawei.hms:ml-computer-vision-ocr:2.0.1.300'
 
     implementation 'com.github.minkiapps:mrz-java:mrz-java-0.6'
