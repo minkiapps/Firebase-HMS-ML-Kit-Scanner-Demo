@@ -1,4 +1,5 @@
 # ML-Kit-Scanner-Demos
+##### Compatible also now on Huawei devices without GMS!
 Various scanner use cases using Firebase ML-Kit, embedded in Android UI.
 
 ## Usecases
@@ -9,7 +10,7 @@ Various scanner use cases using Firebase ML-Kit, embedded in Android UI.
 ### ID Scanner
 ![Alt Text](https://media.giphy.com/media/S3mnzCWlvGQ30QnHxz/giphy.gif)
 
-### SEPA-QR Scanner
+### SEPA-QR Scanner 
 ![Alt Text](https://media.giphy.com/media/H4Dv9JbA96fjwF7hxL/giphy.gif)
 
 #### Technical Features
