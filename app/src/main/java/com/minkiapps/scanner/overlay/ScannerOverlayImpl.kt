@@ -9,11 +9,9 @@ import android.util.Size
 import android.view.View
 import androidx.core.graphics.withScale
 import androidx.core.graphics.withTranslation
-import com.google.mlkit.vision.text.Text
 import com.minkiapps.scanner.R
-import com.minkiapps.scanner.util.getEnum
-import com.minkiapps.scanner.util.isPortrait
-import com.minkiapps.scanner.util.px
+import com.minkiapps.scanner.analyser.BlockWrapper
+import com.minkiapps.scanner.util.*
 import kotlin.math.min
 
 class ScannerOverlayImpl @JvmOverloads constructor(
@@ -80,7 +78,7 @@ class ScannerOverlayImpl @JvmOverloads constructor(
 
             canvas.withTranslation(scanRect.left, scanRect.top) {
                 withScale(scaleX, scaleY) {
-                    drawRoundRect(RectF(block.textBlock.boundingBox!!), radius, radius, strokePaint)
+                    drawRoundRect(RectF(block.textBlock.boundingBox), radius, radius, strokePaint)
                 }
             }
         }
@@ -98,14 +96,14 @@ class ScannerOverlayImpl @JvmOverloads constructor(
                     val l = (width - rectW) / 2
                     val r = width - l
                     val t = height * 0.2f
-                    val b = t + rectW / 10
+                    val b = t + rectW / getIBANOverlayHeightFactor()
                     RectF(l, t, r, b)
                 } else {
                     val rectW = min(width * 0.6f, MAX_WIDTH_LANDSCAPE)
                     val l = width * 0.05f
                     val r = l + rectW
                     val t = height * 0.15f
-                    val b = t + rectW / 10
+                    val b = t + rectW / getIBANOverlayHeightFactor()
                     RectF(l, t, r, b)
                 }
             }
@@ -147,16 +145,21 @@ class ScannerOverlayImpl @JvmOverloads constructor(
             }
         }
 
+    private fun getIBANOverlayHeightFactor() : Int {
+        //https://forums.developer.huawei.com/forumPortal/en/topicview?tid=0201312277449990161&fid=0101187876626530001
+        return if(context.isHmsAvailable() && !context.isGmsAvailable()) 7 else 10 //HMS ML Kit doesn't recognise characters properly if the inout image is too small in height
+    }
+
     enum class Type {
         IBAN,
         ID,
         SEPAQR
     }
 
-    data class GraphicBlock(val textBlock: Text.TextBlock, val bitmapSize: Size)
+    data class GraphicBlock(val textBlock: BlockWrapper, val bitmapSize: Size)
 
     companion object {
         const val MAX_WIDTH_PORTRAIT = 1200f
-        const val MAX_WIDTH_LANDSCAPE = 2000f
+        const val MAX_WIDTH_LANDSCAPE = 1600f
     }
 }

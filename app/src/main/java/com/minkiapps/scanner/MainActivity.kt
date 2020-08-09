@@ -33,18 +33,18 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         val hmsAvailable = isHmsAvailable()
 
         if(gmsAvailable) {
-            ivActMainGMSAvailable.setImageDrawable(getDrawable(R.drawable.ic_baseline_check_24dp_white))
+            ivActMainGMSAvailable.setImageResource(R.drawable.ic_baseline_check_24dp_white)
             ivActMainGMSAvailable.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.md_green))
         } else {
-            ivActMainGMSAvailable.setImageDrawable(getDrawable(R.drawable.ic_baseline_clear_24dp_white))
+            ivActMainGMSAvailable.setImageResource(R.drawable.ic_baseline_clear_24dp_white)
             ivActMainGMSAvailable.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.md_red))
         }
 
         if(hmsAvailable) {
-            ivActMainHMSAvailable.setImageDrawable(getDrawable(R.drawable.ic_baseline_check_24dp_white))
+            ivActMainHMSAvailable.setImageResource(R.drawable.ic_baseline_check_24dp_white)
             ivActMainHMSAvailable.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.md_green))
         } else {
-            ivActMainHMSAvailable.setImageDrawable(getDrawable(R.drawable.ic_baseline_clear_24dp_white))
+            ivActMainHMSAvailable.setImageResource(R.drawable.ic_baseline_clear_24dp_white)
             ivActMainHMSAvailable.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.md_red))
         }
 

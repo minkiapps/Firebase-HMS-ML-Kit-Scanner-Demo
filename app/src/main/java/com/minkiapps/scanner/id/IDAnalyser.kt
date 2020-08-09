@@ -6,13 +6,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.tasks.Tasks
 import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.TextRecognizer
+import com.huawei.hms.mlsdk.MLAnalyzerFactory
+import com.huawei.hms.mlsdk.common.MLFrame
+import com.huawei.hms.mlsdk.text.MLTextAnalyzer
 import com.innovatrics.mrz.MrzParser
 import com.innovatrics.mrz.types.MrzDate
 import com.innovatrics.mrz.types.MrzSex
 import com.minkiapps.scanner.analyser.BaseAnalyser
+import com.minkiapps.scanner.analyser.BlockWrapper
 import com.minkiapps.scanner.id.processor.MrzTextPreProcessor
 import com.minkiapps.scanner.id.processor.MrzTextPreProcessor.MIN_POSSIBLE_CHAR_LENGTH_PER_LINE
 import com.minkiapps.scanner.overlay.ScannerOverlay
@@ -25,7 +28,13 @@ class IDAnalyser(scannerOverlay: ScannerOverlay,
                           mlService: MLService
 ) : BaseAnalyser<IDResult>(scannerOverlay, mlService) {
 
-    private val textRecognizer: TextRecognizer = TextRecognition.getClient()
+    private val gmsTextRecognizer: TextRecognizer by lazy {
+        TextRecognition.getClient()
+    }
+
+    private val hmsTextRecognizer : MLTextAnalyzer by lazy {
+        MLAnalyzerFactory.getInstance().localTextAnalyzer
+    }
 
     private var addressText : String? = null
 
@@ -34,10 +43,10 @@ class IDAnalyser(scannerOverlay: ScannerOverlay,
 
     override fun onBitmapPrepared(bitmap: Bitmap) {
         val inputImage = InputImage.fromBitmap(bitmap, 0)
-        val task = Tasks.await(textRecognizer.process(inputImage))
+        val textBlocks = detectTextBlocks(bitmap)
 
         var detectedPossibleMrzBlock = false
-        task.textBlocks.forEach { block ->
+        textBlocks.forEach { block ->
             detectPossibleAddressText(block)
 
             if(isPossibleMrzBlock(block.text)) {
@@ -60,14 +69,35 @@ class IDAnalyser(scannerOverlay: ScannerOverlay,
             postResult(null)
     }
 
-    private fun detectPossibleAddressText(block: Text.TextBlock) {
+    private fun detectTextBlocks(bitmap: Bitmap) : List<BlockWrapper> {
+        return when(mlService) {
+            MLService.GMS -> {
+                val inputImage = InputImage.fromBitmap(bitmap, 0)
+                val result = Tasks.await(gmsTextRecognizer.process(inputImage))
+                if(result.text.isNotBlank()) {
+                    Timber.d("GMS scanned raw text: ${result.text}")
+                }
+                result.textBlocks.map { BlockWrapper(gmsTextBLock = it) }
+            }
+            MLService.HMS -> {
+                val result = com.huawei.hmf.tasks.Tasks.await(hmsTextRecognizer.asyncAnalyseFrame(
+                    MLFrame.fromBitmap(bitmap)))
+                if(result.stringValue.isNotBlank()) {
+                    Timber.d("HMS scanned raw text: ${result.stringValue}")
+                }
+                result.blocks.map { BlockWrapper(hmsTextBLock = it) }
+            }
+        }
+    }
+
+    private fun detectPossibleAddressText(block: BlockWrapper) {
         val lines = block.lines
 
         if(lines.size > 1
-                && lines[0].text.contains("Anschrift")
-                || lines[0].text.contains("Adresse")
-                || lines[0].text.contains("Address")) {
-            val addressText = block.lines.subList(1, lines.size).joinToString(separator = ", ") { it.text }
+                && lines[0].contains("Anschrift")
+                || lines[0].contains("Adresse")
+                || lines[0].contains("Address")) {
+            val addressText = block.lines.subList(1, lines.size).joinToString(separator = ", ") { it }
             if(addressText.length > this.addressText?.length ?: 0) {
                 this.addressText = addressText
             }
@@ -134,11 +164,14 @@ class IDAnalyser(scannerOverlay: ScannerOverlay,
         } else twentiethCenturyDate
     }
 
-    companion object {
-        private const val PARSER_FILLER_REPLACEMENT = ", " //mrz parser replaces all "<<" with ", " within recognized name fields
+    override fun close() {
+        when(mlService) {
+            MLService.GMS -> gmsTextRecognizer.close()
+            MLService.HMS -> hmsTextRecognizer.close()
+        }
     }
 
-    override fun close() {
-        textRecognizer.close()
+    companion object {
+        private const val PARSER_FILLER_REPLACEMENT = ", " //mrz parser replaces all "<<" with ", " within recognized name fields
     }
 }
