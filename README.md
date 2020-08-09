@@ -10,7 +10,7 @@ Various scanner use cases using Firebase ML-Kit, embedded in Android UI.
 ### ID Scanner
 ![Alt Text](https://media.giphy.com/media/S3mnzCWlvGQ30QnHxz/giphy.gif)
 
-### SEPA-QR Scanner 
+### SEPA-QR Scanner (Firebase only)
 ![Alt Text](https://media.giphy.com/media/H4Dv9JbA96fjwF7hxL/giphy.gif)
 
 #### Technical Features
