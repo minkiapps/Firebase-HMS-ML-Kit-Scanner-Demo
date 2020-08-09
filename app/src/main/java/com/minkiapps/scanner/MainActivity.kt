@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         val isOneServiceAvailable = gmsAvailable or hmsAvailable
         btnActMainIbanScanner.isEnabled = isOneServiceAvailable
         btnActMainMrzScanner.isEnabled = isOneServiceAvailable
-        btnActMainQRScanner.isEnabled = isOneServiceAvailable
+        btnActMainQRScanner.isEnabled = gmsAvailable //hms has no qr recogniser like gms
     }
 
 
