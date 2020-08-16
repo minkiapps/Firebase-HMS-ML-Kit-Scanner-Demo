@@ -131,8 +131,8 @@ abstract class BaseAnalyser<T>(private val scannerOverlay: ScannerOverlay,
             90 -> {
                 val startX = (scannerRect.relativePosY * this.width).toInt()
                 val numberPixelW = (scannerRect.relativeHeight * this.width).toInt()
-                val startY = (scannerRect.relativePosX * this.height).toInt()
                 val numberPixelH = (scannerRect.relativeWidth * this.height).toInt()
+                val startY = height - (scannerRect.relativePosX * this.height).toInt() - numberPixelH
                 Rect(startX, startY, startX + numberPixelW, startY + numberPixelH)
             }
             180 -> {
