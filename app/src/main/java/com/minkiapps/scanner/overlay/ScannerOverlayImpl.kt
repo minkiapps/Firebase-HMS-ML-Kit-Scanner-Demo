@@ -10,6 +10,7 @@ import android.view.View
 import androidx.core.graphics.withScale
 import androidx.core.graphics.withTranslation
 import com.minkiapps.scanner.R
+import com.minkiapps.scanner.analyser.BaseAnalyser
 import com.minkiapps.scanner.analyser.BlockWrapper
 import com.minkiapps.scanner.util.*
 import kotlin.math.min
@@ -49,6 +50,8 @@ class ScannerOverlayImpl @JvmOverloads constructor(
     private var graphicBlocks : List<GraphicBlock>? = null
 
     private val blueColor = Color.BLUE
+
+    lateinit var mlService: BaseAnalyser.MLService
 
     init {
         setWillNotDraw(false)
@@ -146,8 +149,10 @@ class ScannerOverlayImpl @JvmOverloads constructor(
         }
 
     private fun getIBANOverlayHeightFactor() : Int {
-        //https://forums.developer.huawei.com/forumPortal/en/topicview?tid=0201312277449990161&fid=0101187876626530001
-        return if(context.isHmsAvailable() && !context.isGmsAvailable()) 7 else 10 //HMS ML Kit doesn't recognise characters properly if the inout image is too small in height
+        return when(mlService) {
+            BaseAnalyser.MLService.GMS -> 10
+            BaseAnalyser.MLService.HMS -> 7 //HMS ML Kit doesn't recognise characters properly if the inout image is too small in height -> https://forums.developer.huawei.com/forumPortal/en/topicview?tid=0201312277449990161&fid=0101187876626530001
+        }
     }
 
     enum class Type {

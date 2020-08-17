@@ -7,20 +7,18 @@ import com.minkiapps.scanner.scan.BaseScannerActivity
 
 class IbanScannerActivity : BaseScannerActivity<String>() {
 
-    private val ibanAnalyser by lazy {
-        IBANAnalyser(scannerOverlay(), getMlKitService())
-    }
-
-    override fun getImageAnalyser(): BaseAnalyser<String> = ibanAnalyser
-
     override fun getScannerType(): ScannerOverlayImpl.Type {
         return ScannerOverlayImpl.Type.IBAN
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ibanAnalyser.textRecognizedLiveData().observe(this) {
+        (analyser as IBANAnalyser).textRecognizedLiveData().observe(this) {
             scannerOverlay().drawBlueRect = it
         }
+    }
+
+    override fun initImageAnalyser(mlService: BaseAnalyser.MLService): BaseAnalyser<String> {
+        return IBANAnalyser(scannerOverlay(), mlService)
     }
 }

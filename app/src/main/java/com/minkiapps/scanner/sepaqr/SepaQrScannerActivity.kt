@@ -8,22 +8,18 @@ import kotlinx.android.synthetic.main.activity_scanner.*
 
 class SepaQrScannerActivity : BaseScannerActivity<SepaData>() {
 
-    private val analyser by lazy {
-        SepaQRAnalyser(olActScanner, getMlKitService())
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        analyser.qrRecognizedLiveData().observe(this) {
+        (analyser as SepaQRAnalyser).qrRecognizedLiveData().observe(this) {
             olActScanner.drawBlueRect = it
         }
     }
 
-    override fun getImageAnalyser(): BaseAnalyser<SepaData> {
-        return analyser
-    }
-
     override fun getScannerType(): ScannerOverlayImpl.Type {
         return ScannerOverlayImpl.Type.SEPAQR
+    }
+
+    override fun initImageAnalyser(mlService: BaseAnalyser.MLService): BaseAnalyser<SepaData> {
+        return SepaQRAnalyser(scannerOverlay(), mlService)
     }
 }

@@ -8,12 +8,8 @@ import kotlinx.android.synthetic.main.activity_scanner.*
 
 class IDScannerActivity : BaseScannerActivity<IDResult>() {
 
-    private val idAnalyser by lazy {
-        IDAnalyser(olActScanner, getMlKitService())
-    }
-
-    override fun getImageAnalyser(): BaseAnalyser<IDResult> {
-        return idAnalyser
+    override fun initImageAnalyser(mlService: BaseAnalyser.MLService): BaseAnalyser<IDResult> {
+        return IDAnalyser(olActScanner, mlService)
     }
 
     override fun getScannerType(): ScannerOverlayImpl.Type {
@@ -23,8 +19,8 @@ class IDScannerActivity : BaseScannerActivity<IDResult>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        idAnalyser.mrzBlockLiveData.observe(this) {
-            olActScanner.drawGraphicBlocks(listOf(it))
+        (analyser as IDAnalyser).mrzBlockLiveData.observe(this) {
+            scannerOverlay().drawGraphicBlocks(listOf(it))
         }
     }
 

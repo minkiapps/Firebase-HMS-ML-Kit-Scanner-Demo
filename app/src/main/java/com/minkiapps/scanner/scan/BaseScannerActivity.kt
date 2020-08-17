@@ -1,6 +1,8 @@
 package com.minkiapps.scanner.scan
 
 import android.Manifest
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Size
@@ -13,12 +15,10 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.get
-import androidx.lifecycle.Observer
 import com.minkiapps.scanner.R
 import com.minkiapps.scanner.analyser.BaseAnalyser
 import com.minkiapps.scanner.overlay.ScannerOverlayImpl
-import com.minkiapps.scanner.util.isGmsAvailable
-import com.minkiapps.scanner.util.isHmsAvailable
+import com.minkiapps.scanner.util.extraSerializableOrThrow
 import kotlinx.android.synthetic.main.activity_scanner.*
 import timber.log.Timber
 import java.util.concurrent.Executors
@@ -27,6 +27,12 @@ abstract class BaseScannerActivity<T> : AppCompatActivity(R.layout.activity_scan
 
     private var torchOn : Boolean = false
     private val analyserExecutor = Executors.newSingleThreadExecutor()
+
+    private val mlService : BaseAnalyser.MLService by extraSerializableOrThrow(EXTRA_MOBILE_SERVICE)
+
+    protected val analyser : BaseAnalyser<T> by lazy {
+        initImageAnalyser(mlService)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,29 +48,29 @@ abstract class BaseScannerActivity<T> : AppCompatActivity(R.layout.activity_scan
         }
 
         olActScanner.type = getScannerType()
+        olActScanner.mlService = mlService
         setUp()
     }
 
     private fun setUp() {
-        val imageAnalyser = getImageAnalyser()
-        imageAnalyser.bitmapLiveData().observe(this, Observer {
+        analyser.bitmapLiveData().observe(this, {
             ivActScannerCroppedPreview.setImageBitmap(it)
         })
 
-        imageAnalyser.errorLiveData().observe(this, Observer { e ->
+        analyser.errorLiveData().observe(this, { e ->
             Timber.e(e, "Analysing failed")
             Toast.makeText(this, "Scanner failed, reason: ${e.message}", Toast.LENGTH_LONG).show()
             finish()
         })
 
-        imageAnalyser.liveData().observe(this, { result ->
+        analyser.liveData().observe(this, { result ->
             tvActScannerScannedResult.text = ""
             result?.let {
                 tvActScannerScannedResult.text = it.toString()
             }
         })
 
-        imageAnalyser.debugInfoLiveData().observe(this, {
+        analyser.debugInfoLiveData().observe(this, {
             val surfaceView = pvActScanner[0]
             val info = "$it\nPreview Size (${surfaceView.width}, ${surfaceView.height}) " +
                     "Translation (${surfaceView.translationX}, ${surfaceView.translationY}) " +
@@ -81,8 +87,7 @@ abstract class BaseScannerActivity<T> : AppCompatActivity(R.layout.activity_scan
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
 
         cameraProviderFuture.addListener({
-            val imageAnalyser = getImageAnalyser()
-            lifecycle.addObserver(imageAnalyser)
+            lifecycle.addObserver(analyser)
             // Used to bind the lifecycle of cameras to the lifecycle owner
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
@@ -95,7 +100,7 @@ abstract class BaseScannerActivity<T> : AppCompatActivity(R.layout.activity_scan
                 .setTargetResolution(Size(TARGET_PREVIEW_WIDTH, TARGET_PREVIEW_HEIGHT))
                 .build()
                 .also {
-                    it.setAnalyzer(analyserExecutor, imageAnalyser)
+                    it.setAnalyzer(analyserExecutor, analyser)
                 }
 
             // Select back camera
@@ -149,24 +154,24 @@ abstract class BaseScannerActivity<T> : AppCompatActivity(R.layout.activity_scan
 
     protected fun scannerOverlay() : ScannerOverlayImpl = olActScanner
 
-    abstract fun getImageAnalyser(): BaseAnalyser<T>
+    abstract fun initImageAnalyser(mlService: BaseAnalyser.MLService): BaseAnalyser<T>
 
     abstract fun getScannerType(): ScannerOverlayImpl.Type
 
-    protected fun getMlKitService() : BaseAnalyser.MLService {
-        return when {
-            isGmsAvailable() -> BaseAnalyser.MLService.GMS
-            isHmsAvailable() -> BaseAnalyser.MLService.HMS
-            else -> throw RuntimeException("Neither GMS nor HMS is available on this phone!")
-        }
-    }
-
     companion object {
+        const val EXTRA_MOBILE_SERVICE = "EXTRA_MOBILE_SERVICE"
+
         private const val TARGET_PREVIEW_WIDTH = 960
         private const val TARGET_PREVIEW_HEIGHT = 1280
 
         private const val REQUEST_CODE_PERMISSIONS = 10
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
+
+        inline fun <reified T : AppCompatActivity>createIntent(context: Context, mobileService: BaseAnalyser.MLService) : Intent {
+            val intent = Intent(context, T::class.java)
+            intent.putExtra(EXTRA_MOBILE_SERVICE, mobileService)
+            return intent
+        }
     }
 
 }

@@ -1,6 +1,6 @@
 package com.minkiapps.scanner.mrz.processor
 
-import com.minkiapps.scanner.id.parser.MrzParser
+import com.innovatrics.mrz.MrzParser
 import com.minkiapps.scanner.id.processor.MrzTextPreProcessor
 import org.junit.Assert
 import org.junit.Test

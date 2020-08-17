@@ -56,7 +56,7 @@ abstract class BaseAnalyser<T>(private val scannerOverlay: ScannerOverlay,
                 debugInfoData.postValue("""
                    Image proxy (${imageProxy.width},${imageProxy.height}) format : ${imageProxy.format} rotation: $rotation 
                    Cropped Image (${bitmap.width},${bitmap.height}) Preparing took: ${imagePreparedReadyEpoch - imageProxyReadyEpoch}ms
-                   OCR Processing took : ${imageProcessedEpoch - imagePreparedReadyEpoch}ms
+                   OCR Processing took : ${imageProcessedEpoch - imagePreparedReadyEpoch}ms Using Service: $mlService
                 """.trimIndent())
             }
 
