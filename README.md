@@ -5,10 +5,10 @@ Various scanner use cases using Firebase ML-Kit, embedded in Android UI.
 ## Usecases
 
 ### IBAN Scanner
-![Alt Text](https://media.giphy.com/media/MaDaYtU5MIn0BkiqWM/giphy.gif)
+![Alt Text](https://media.giphy.com/media/l1V7EyESe6gXt1H6JS/giphy.gif)
 
-### ID Scanner
-![Alt Text](https://media.giphy.com/media/S3mnzCWlvGQ30QnHxz/giphy.gif)
+### MRZ Scanner
+![Alt Text](https://media.giphy.com/media/cL4Q4AZ5kentdLtob2/giphy.gif)
 
 ### SEPA-QR Scanner (Firebase only)
 ![Alt Text](https://media.giphy.com/media/H4Dv9JbA96fjwF7hxL/giphy.gif)
