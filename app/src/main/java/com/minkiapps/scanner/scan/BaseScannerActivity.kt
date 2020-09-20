@@ -114,7 +114,7 @@ abstract class BaseScannerActivity<T> : AppCompatActivity(R.layout.activity_scan
 
                 // Bind use cases to camera
                 val camera = cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageAnalyzer)
-                preview.setSurfaceProvider(pvActScanner.createSurfaceProvider())
+                preview.setSurfaceProvider(pvActScanner.surfaceProvider)
 
                 fabActScannerTorch.setOnClickListener {
                     torchOn = !torchOn
