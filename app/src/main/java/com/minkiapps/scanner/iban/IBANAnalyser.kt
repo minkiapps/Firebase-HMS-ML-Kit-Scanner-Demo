@@ -7,6 +7,7 @@ import com.google.android.gms.tasks.Tasks
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.TextRecognizer
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.huawei.hms.mlsdk.MLAnalyzerFactory
 import com.huawei.hms.mlsdk.common.MLFrame
 import com.huawei.hms.mlsdk.text.MLTextAnalyzer
@@ -23,7 +24,7 @@ class IBANAnalyser(scannerOverlay: ScannerOverlay,
     private val ibanRegex = Pattern.compile("^[A-Z]{2}[0-9]{2}[0-9A-Za-z]{11,28}\$")
 
     private val gmsTextRecognizer: TextRecognizer by lazy {
-        TextRecognition.getClient()
+        TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
     }
 
     private val hmsTextRecognizer : MLTextAnalyzer by lazy {

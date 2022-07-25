@@ -8,6 +8,7 @@ import com.google.android.gms.tasks.Tasks
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.TextRecognizer
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.huawei.hms.mlsdk.MLAnalyzerFactory
 import com.huawei.hms.mlsdk.common.MLFrame
 import com.huawei.hms.mlsdk.text.MLTextAnalyzer
@@ -29,7 +30,7 @@ class IDAnalyser(scannerOverlay: ScannerOverlay,
 ) : BaseAnalyser<IDResult>(scannerOverlay, mlService) {
 
     private val gmsTextRecognizer: TextRecognizer by lazy {
-        TextRecognition.getClient()
+        TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
     }
 
     private val hmsTextRecognizer : MLTextAnalyzer by lazy {
@@ -47,6 +48,7 @@ class IDAnalyser(scannerOverlay: ScannerOverlay,
 
         var detectedPossibleMrzBlock = false
         textBlocks.forEach { block ->
+            Timber.d(block.text)
             detectPossibleAddressText(block)
 
             if(isPossibleMrzBlock(block.text)) {
